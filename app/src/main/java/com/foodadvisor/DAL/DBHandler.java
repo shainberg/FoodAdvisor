@@ -1,12 +1,17 @@
 package com.foodadvisor.DAL;
 
 import android.content.Context;
+import android.content.SyncStatusObserver;
 
+import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 import com.foodadvisor.models.Comment;
+import com.foodadvisor.models.Model;
+import com.foodadvisor.models.Restaurant;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,53 +20,119 @@ import java.util.List;
  * Created by OR on 06/05/2016.
  */
 public class DBHandler {
-    private static DBHandler dbHandler;
-    Firebase firebase;
-
     public DBHandler(Context context) {
         Firebase.setAndroidContext(context);
-        firebase = new Firebase("https://foodadvisor-c3bea.firebaseio.com/");
     }
 
-    public static DBHandler getInstance() {
-        if (dbHandler == null) {
-            throw new NullPointerException("In first use you have to provide Context");
-        }
+    public void getRestaurants(final Model.GetRestaurantsListener listener) {
+        Firebase ref = new Firebase("https://foodadvisor-c3bea.firebaseio.com/restaurants");
 
-        return dbHandler;
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                System.out.println("fetching rests");
+
+                final List<Restaurant> restaurants = new ArrayList<Restaurant>();
+
+                if (snapshot.exists()) {
+
+                    for (DataSnapshot child: snapshot.getChildren()) {
+                        Restaurant restaurant = child.getValue(Restaurant.class);
+                        restaurants.add(restaurant);
+                        System.out.println("hi " + restaurant.getName());
+                    }
+                }
+                else {
+                    System.out.println("no restaurants");
+                    //Toast toast = Toast.makeText(this, "email not found", Toast.LENGTH_SHORT);
+                }
+
+                listener.done(restaurants);
+            }
+
+            @Override
+            public void onCancelled(FirebaseError error) {
+            }
+        });
     }
 
-    public static DBHandler getInstance(Context context) {
-        if (dbHandler == null) {
-            dbHandler = new DBHandler(context);
-        }
+    public void getRestaurant(Integer restaurantId, final Model.GetRestaurantListener listener) {
+        Firebase ref = new Firebase("https://foodadvisor-c3bea.firebaseio.com/restaurants");
+        Query queryRef = ref.orderByChild("id").equalTo(restaurantId);
 
-        return dbHandler;
+        queryRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                System.out.println("fetching rest");
+
+                if (snapshot.exists()) {
+                    for (DataSnapshot child: snapshot.getChildren()) {
+                        Restaurant restaurant = child.getValue(Restaurant.class);
+                        System.out.println("hi " + restaurant.getName());
+                        listener.done(restaurant);
+                        break;
+                    }
+                }
+                else {
+                    System.out.println("no restaurants");
+                    //Toast toast = Toast.makeText(this, "email not found", Toast.LENGTH_SHORT);
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError error) {
+            }
+        });
     }
 
-    public void getComments(Integer restaurantId) {
+    public void getComments(Integer restaurantId, final Model.GetCommentsListener listener) {
+        Firebase ref = new Firebase("https://foodadvisor-c3bea.firebaseio.com/comments");
+        Query queryRef = ref.orderByChild("restaurantId").equalTo(restaurantId);
 
-        List<Comment> comments = null;
-        System.out.println("KKK");
-        firebase.child("comments").addValueEventListener(new ValueEventListener() {
+        queryRef.addValueEventListener(new ValueEventListener() {
+             @Override
+             public void onDataChange(DataSnapshot snapshot) {
+                 System.out.println("fetching comments");
 
-                                                             @Override
-                                                             public void onDataChange(DataSnapshot snapshot) {
-                                                                         System.out.println("SHALOM");
-                                                                         System.out.println(snapshot.getValue());  //prints "Do you have data? You'll love Firebase."
-                                                                         //snapshot.getChildren(
+                 final List<Comment> comments = new ArrayList<Comment>();
 
-                                                             }
+                 if (snapshot.exists()) {
+                     for (DataSnapshot child: snapshot.getChildren()) {
+                         Comment comment = child.getValue(Comment.class);
+                         comments.add(comment);
+                         System.out.println("hi " + comment.getName());
+                     }
+                 }
+                 else {
+                     System.out.println("no comments");
+                     //Toast toast = Toast.makeText(this, "email not found", Toast.LENGTH_SHORT);
+                 }
 
-                                                             @Override
-                                                             public void onCancelled(FirebaseError error) {
-                                                             }
+                 listener.done(comments);
+             }
 
-
-                                                         }
-
-        );
+             @Override
+             public void onCancelled(FirebaseError error) {
+             }
+        });
     }
+
+    public void addComment(Comment comment, final Model.AddCommentListener listener) {
+        Firebase ref = new Firebase("https://foodadvisor-c3bea.firebaseio.com/comments");
+
+        ref.push().setValue(comment, new Firebase.CompletionListener() {
+            @Override
+            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                if (firebaseError != null) {
+                    System.out.println("Data could not be saved. " + firebaseError.getMessage());
+                } else {
+                    System.out.println("Data saved successfully.");
+                    listener.done();
+                }
+            }
+        });
+    }
+
 }
 
 

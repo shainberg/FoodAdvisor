@@ -3,12 +3,10 @@ package com.foodadvisor.models;
 /**
  * Created by OR on 06/05/2016.
  */
-public class Restaurant {
 
+public class Restaurant {
     private Integer id;
     private String name;
-    private Double latitude;
-    private Double longitude;
     private String phone;
     private String address;
     private String type;
@@ -17,6 +15,10 @@ public class Restaurant {
     private Boolean accessible;
     private String time;
     private String region;
+    private Double latitude;
+    private Double longitude;
+
+    public Restaurant(){}
 
     public Integer getId() {
         return id;
@@ -32,22 +34,6 @@ public class Restaurant {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(Double latitude) {
-        this.latitude = latitude;
-    }
-
-    public Double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(Double longitude) {
-        this.longitude = longitude;
     }
 
     public String getPhone() {
@@ -113,4 +99,19 @@ public class Restaurant {
     public void setRegion(String region) {
         this.region = region;
     }
+
+    public Double getLatitude() { return latitude; }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
 }

@@ -1,13 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
+
     compileSdkVersion 24
     buildToolsVersion "24.0.1"
 
     defaultConfig {
         applicationId "com.foodadvisor"
         minSdkVersion 17
-        targetSdkVersion 24
+        targetSdkVersion 17
         versionCode 1
         versionName "1.0"
     }

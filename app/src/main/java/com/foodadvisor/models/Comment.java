@@ -8,17 +8,32 @@ import java.util.Date;
  * Created by OR on 06/05/2016.
  */
 public class Comment {
-    private Integer id;
-    private String name;
-    private String content;
-    private String image;
-    private Integer rate;
+    Integer id;
+    String name;
+    String content;
+    String image;
+    Integer rate;
+    String date;
+    Integer restaurantId;
 
-    public Date getDate() {
+    public Comment() {
+    }
+
+    public Comment(Integer id, String name, String content, String image, Integer rate, String date, Integer restaurantId) {
+        this.id = id;
+        this.name= name;
+        this.content = content;
+        this.image = image;
+        this.rate = rate;
+        this.date = date;
+        this.restaurantId = restaurantId;
+    }
+
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
@@ -70,6 +85,4 @@ public class Comment {
         this.restaurantId = restaurantId;
     }
 
-    java.util.Date date;
-    Integer restaurantId;
 }
