@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_restaurant"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.foodadvisor.RestaurantActivity"
+    tools:showIn="@layout/activity_restaurant">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteY="18dp"
+        tools:layout_editor_absoluteX="-205dp">
+
+    <TextView
+        android:text=""
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteY="8dp"
+        tools:layout_editor_absoluteX="60dp"
+        android:id="@+id/restaurant_name" />
+
+    <TextView
+        android:text=""
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteY="33dp"
+        tools:layout_editor_absoluteX="60dp"
+        android:id="@+id/restaurant_address" />
+
+    <TextView
+        android:text=""
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteY="63dp"
+        tools:layout_editor_absoluteX="60dp"
+        android:id="@+id/restaurant_time" />
+
+    <TextView
+        android:text=""
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteY="89dp"
+        tools:layout_editor_absoluteX="60dp"
+        android:id="@+id/restaurant_type" />
+
+    <TextView
+        android:text=""
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteY="119dp"
+        tools:layout_editor_absoluteX="60dp"
+        android:id="@+id/restaurant_phone" />
+
+    <CheckBox
+        android:text="parking"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteY="180dp"
+        tools:layout_editor_absoluteX="60dp"
+        android:id="@+id/restaurant_parking" />
+
+    <CheckBox
+        android:text="kosher"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteY="232dp"
+        tools:layout_editor_absoluteX="60dp"
+        android:id="@+id/restaurant_kosher" />
+
+    <CheckBox
+        android:text="accessible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteY="280dp"
+        tools:layout_editor_absoluteX="60dp"
+        android:id="@+id/restaurant_accessible" />
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

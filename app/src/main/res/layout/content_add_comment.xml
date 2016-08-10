@@ -38,7 +38,7 @@
         android:layout_marginBottom="75dp" />
 
 
-    <ImageView android:id="@+id/imageView" android:layout_width="fill_parent"
+    <ImageView android:id="@+id/comment_image" android:layout_width="fill_parent"
         android:layout_height="wrap_content" android:layout_weight="1"
         android:layout_below="@+id/editText"
         android:layout_alignParentStart="true" />
@@ -68,7 +68,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@android:drawable/ic_menu_gallery"
-        android:id="@+id/imageButton4"
+        android:id="@+id/gallery_button"
         android:layout_above="@+id/ratingBar"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="25dp" />
@@ -77,11 +77,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@android:drawable/ic_menu_camera"
-        android:id="@+id/imageButton5"
+        android:id="@+id/camera_button"
         android:background="@color/colorPrimary"
         android:layout_above="@+id/ratingBar"
-        android:layout_toStartOf="@+id/imageButton4"
-        android:onClick="openCamera"/>
+        android:layout_toStartOf="@+id/imageButton4"/>
 
 
 </RelativeLayout>

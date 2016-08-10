@@ -1,10 +1,12 @@
 package com.foodadvisor.models;
 
+import java.io.Serializable;
+
 /**
  * Created by OR on 06/05/2016.
  */
 
-public class Restaurant {
+public class Restaurant implements Serializable {
     private Integer id;
     private String name;
     private String phone;

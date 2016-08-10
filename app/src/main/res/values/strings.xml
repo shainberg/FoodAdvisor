@@ -4,5 +4,7 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="name_placeholder">Enter your name</string>
     <string name="text_placeholder">Enter your comment</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="title_activity_restaurant">RestaurantActivity</string>
 
 </resources>

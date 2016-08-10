@@ -1,6 +1,8 @@
 package com.foodadvisor;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
@@ -13,13 +15,15 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.firebase.client.core.AndroidSupport;
 
 public class AddCommentActivity extends AppCompatActivity {
     private static final int CAMERA_PIC_REQUEST = 1337;
-
+    private Bitmap imageBitmap = null;
+    ImageView imageView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,7 +38,7 @@ public class AddCommentActivity extends AppCompatActivity {
         EditText editText = (EditText) findViewById(R.id.editText);
         editText.setHint(R.string.text_placeholder);
 
-        ImageButton cameraButton = (ImageButton) findViewById(R.id.imageButton5);
+        ImageButton cameraButton = (ImageButton) findViewById(R.id.camera_button);
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -45,17 +49,20 @@ public class AddCommentActivity extends AppCompatActivity {
             }
         });
 
-        ImageButton galleryButton = (ImageButton) findViewById(R.id.imageButton4);
+        ImageButton galleryButton = (ImageButton) findViewById(R.id.gallery_button);
         galleryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent openGallery = new Intent(Intent.ACTION_PICK,
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
-                startActivityForResult(openGallery , 0 );
+                startActivityForResult(openGallery, 0);
 
             }
         });
+
+        imageView = (ImageView) findViewById(R.id.comment_image);
+
 
 
 
@@ -70,6 +77,19 @@ public class AddCommentActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            imageBitmap = (Bitmap) extras.get("data");
+            imageView.setImageBitmap(imageBitmap);
+        }
+        else if (requestCode == 0 && resultCode == RESULT_OK){
+            Uri imageUri = data.getData();
+            imageView.setImageURI(imageUri);
+        }
     }
 
     @Override
