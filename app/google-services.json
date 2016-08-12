@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "920024522862",
+    "firebase_url": "https://foodadvisor-c3bea.firebaseio.com",
+    "project_id": "foodadvisor-c3bea",
+    "storage_bucket": "foodadvisor-c3bea.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:920024522862:android:4d0549c3c85e058b",
+        "android_client_info": {
+          "package_name": "com.foodadvisor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "920024522862-ol8u805ocagfrfj0lcj8n9cij2k1h9of.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAPGVK82GQt0ATYavT2PYID13S34Rbay3U"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

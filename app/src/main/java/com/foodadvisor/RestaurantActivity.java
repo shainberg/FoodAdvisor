@@ -10,6 +10,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
@@ -24,8 +25,7 @@ public class RestaurantActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
-        Restaurant restaurant = (Restaurant) getIntent().getSerializableExtra("Restaurant");
+        final Restaurant restaurant = (Restaurant) getIntent().getSerializableExtra("Restaurant");
 
         TextView restaurantNameText = (TextView) findViewById(R.id.restaurant_name);
         restaurantNameText.setText(restaurant.getName());
@@ -47,8 +47,6 @@ public class RestaurantActivity extends AppCompatActivity {
         restaurantAccessibleBox.setClickable(false);
         restaurantAccessibleBox.setChecked(restaurant.getAccessible());
 
-
-
         FloatingActionButton callButton = (FloatingActionButton) findViewById(R.id.call_button);
 
         callButton.setOnClickListener(new View.OnClickListener() {
@@ -59,7 +57,17 @@ public class RestaurantActivity extends AppCompatActivity {
                 startActivity(intent);
                 /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();*/
+            }
+        });
 
+        Button addReview = (Button) findViewById(R.id.add_review);
+
+        addReview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getBaseContext(), AddCommentActivity.class);
+                intent.putExtra("Restaurant", restaurant);
+                startActivity(intent);
             }
         });
 
@@ -78,12 +86,8 @@ public class RestaurantActivity extends AppCompatActivity {
                 {
                     Snackbar.make(view, "Don't have Waze? :(", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
-
-                    /*Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://details?id=com.waze"));
-                    startActivity(intent);*/
                 }
             }
         });
     }
-
 }

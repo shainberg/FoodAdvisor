@@ -81,4 +81,13 @@
 
     </LinearLayout>
 
+    <Button
+        android:text="Add Review"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteY="437dp"
+        tools:layout_editor_absoluteX="30dp"
+        android:id="@+id/add_review"
+        />
+
 </android.support.constraint.ConstraintLayout>

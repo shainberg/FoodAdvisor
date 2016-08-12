@@ -47,7 +47,7 @@ public class Model {
     }
 
     public interface AddCommentListener {
-        void done();
+        void done(String key);
     }
 
     public void addComment(Comment comment, AddCommentListener listener) {

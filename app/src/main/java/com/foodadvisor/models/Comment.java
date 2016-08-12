@@ -1,31 +1,27 @@
 package com.foodadvisor.models;
 
-import android.util.TimeUtils;
-
 import java.util.Date;
 
 /**
- * Created by OR on 06/05/2016.
+ * Created by ORI on 06/05/2016.
  */
 public class Comment {
     Integer id;
     String name;
     String content;
     String image;
-    Integer rate;
+    Float rate;
     String date;
     Integer restaurantId;
 
     public Comment() {
     }
 
-    public Comment(Integer id, String name, String content, String image, Integer rate, String date, Integer restaurantId) {
-        this.id = id;
+    public Comment(String name, String content, Float rate, Integer restaurantId) {
         this.name= name;
         this.content = content;
-        this.image = image;
         this.rate = rate;
-        this.date = date;
+        this.date = new Date().toString();
         this.restaurantId = restaurantId;
     }
 
@@ -69,11 +65,11 @@ public class Comment {
         this.image = image;
     }
 
-    public Integer getRate() {
+    public Float getRate() {
         return rate;
     }
 
-    public void setRate(Integer rate) {
+    public void setRate(Float rate) {
         this.rate = rate;
     }
 

@@ -120,14 +120,15 @@ public class DBHandler {
     public void addComment(Comment comment, final Model.AddCommentListener listener) {
         Firebase ref = new Firebase("https://foodadvisor-c3bea.firebaseio.com/comments");
 
-        ref.push().setValue(comment, new Firebase.CompletionListener() {
+        final Firebase newCommentRef = ref.push();
+        newCommentRef.setValue(comment, new Firebase.CompletionListener() {
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                 if (firebaseError != null) {
                     System.out.println("Data could not be saved. " + firebaseError.getMessage());
                 } else {
                     System.out.println("Data saved successfully.");
-                    listener.done();
+                    listener.done(newCommentRef.getKey());
                 }
             }
         });
