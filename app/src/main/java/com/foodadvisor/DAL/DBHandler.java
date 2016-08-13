@@ -2,6 +2,8 @@ package com.foodadvisor.DAL;
 
 import android.content.Context;
 import android.content.SyncStatusObserver;
+import android.net.Uri;
+import android.support.annotation.NonNull;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
@@ -12,6 +14,10 @@ import com.firebase.client.ValueEventListener;
 import com.foodadvisor.models.Comment;
 import com.foodadvisor.models.Model;
 import com.foodadvisor.models.Restaurant;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,26 +95,49 @@ public class DBHandler {
         Firebase ref = new Firebase("https://foodadvisor-c3bea.firebaseio.com/comments");
         Query queryRef = ref.orderByChild("restaurantId").equalTo(restaurantId);
 
+        final FirebaseStorage storage = FirebaseStorage.getInstance();
+
+        // Create a storage reference from our app
+        final StorageReference storageRef = storage.getReferenceFromUrl("gs://foodadvisor-c3bea.appspot.com");
+
         queryRef.addValueEventListener(new ValueEventListener() {
              @Override
              public void onDataChange(DataSnapshot snapshot) {
                  System.out.println("fetching comments");
-
                  final List<Comment> comments = new ArrayList<Comment>();
 
                  if (snapshot.exists()) {
+                     final Counter counter = new Counter((int) snapshot.getChildrenCount());
+
                      for (DataSnapshot child: snapshot.getChildren()) {
-                         Comment comment = child.getValue(Comment.class);
+                         final Comment comment = child.getValue(Comment.class);
+
+                         storageRef.child("images/" + child.getKey() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                             @Override
+                             public void onSuccess(Uri uri) {
+                                 if (counter.Up()){
+                                     listener.done(comments);
+                                 }
+                                 comment.setImage(uri);
+                             }
+                         }).addOnFailureListener(new OnFailureListener() {
+                             @Override
+                             public void onFailure(@NonNull Exception exception) {
+                                 // Handle any errors
+                                 if (counter.Up()){
+                                     listener.done(comments);
+                                 }
+                             }
+                         });
+
+                         comment.setId(child.getKey());
                          comments.add(comment);
-                         System.out.println("hi " + comment.getName());
                      }
                  }
                  else {
                      System.out.println("no comments");
                      //Toast toast = Toast.makeText(this, "email not found", Toast.LENGTH_SHORT);
                  }
-
-                 listener.done(comments);
              }
 
              @Override
@@ -132,6 +161,21 @@ public class DBHandler {
                 }
             }
         });
+    }
+
+    private class Counter {
+        public Integer count = 0;
+        public Integer limit;
+
+
+        public Counter(Integer limit){
+            this.limit = limit;
+        }
+
+        public Boolean Up(){
+            count++;
+            return (count == limit);
+        }
     }
 
 }

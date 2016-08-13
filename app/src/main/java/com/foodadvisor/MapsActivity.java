@@ -27,15 +27,12 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.List;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private GoogleApiClient mGoogleApiClient = null;
-    private Location mLastLocation;
     GPSTracker gps;
     private double latitude;
     private double longitude;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,19 +43,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        /* = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this /* FragmentActivity *//*,
-                        this /* OnConnectionFailedListener *//*)*/
-                /*.addApi(LocationServices.API)
-                //.addScope(LocationServices.)
-                .build();*/
-        /*if (mGoogleApiClient == null) {
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(LocationServices.API)
-                    .build();
-        }*/
         gps = new GPSTracker(MapsActivity.this);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -76,25 +60,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             // Ask user to enable GPS/network in settings
             gps.showSettingsAlert();
         }
-
-
-
-
-        /*.getR .getService().GetRecommendedParking(numberOfParkings, latitude, longitude,
-                new Callback<List<Parking>>() {
-                    @Override
-                    public void success(List<Parking> parkings, Response response) {
-                        parkings_list = parkings;
-                        SetDataOnMap(parkings);
-                    }
-
-                    @Override
-                    public void failure(RetrofitError error) { }
-                });*/
-
-
     }
-
 
     /**
      * Manipulates the map once available.
@@ -109,13 +75,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setMyLocationEnabled(true);
-//       LatLng x = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-        LatLng y = new LatLng(latitude, longitude);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(y));
-        mMap.addMarker(new MarkerOptions()
-                .position(y)
-                .title("Ori's house"));
-
+        LatLng latLng = new LatLng(latitude, longitude);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng , 10));
 
         Model.instance().getRestaurants(new Model.GetRestaurantsListener() {
             @Override
@@ -135,43 +96,5 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 return false;
             }
         });
-
-    }
-
-    private void drawMarker(Location location){
-        mMap.clear();
-
-        //  convert the location object to a LatLng object that can be used by the map API
-        LatLng currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
-
-        // zoom to the current location
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentPosition,16));
-
-        // add a marker to the map indicating our current position
-        mMap.addMarker(new MarkerOptions()
-                .position(currentPosition)
-                .snippet("Lat:" + location.getLatitude() + "Lng:"+ location.getLongitude()));
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        if (mMap != null)
-        {drawMarker(location);
-        }
-    }
-
-    @Override
-    public void onStatusChanged(String s, int i, Bundle bundle) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String s) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String s) {
-
     }
 }

@@ -1,5 +1,6 @@
 package com.foodadvisor;
 
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -21,6 +22,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.client.core.AndroidSupport;
 import com.foodadvisor.models.Comment;
@@ -37,13 +39,11 @@ import java.io.IOException;
 
 public class AddCommentActivity extends AppCompatActivity {
     private static final int CAMERA_PIC_REQUEST = 1337;
-    private Bitmap imageBitmap = null;
     ImageView imageView;
     EditText editName;
     EditText editText;
     RatingBar ratingBar;
     Restaurant restaurant;
-    TextView textView;
     Uri imageUri;
 
     @Override
@@ -54,13 +54,9 @@ public class AddCommentActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         restaurant = (Restaurant) getIntent().getSerializableExtra("Restaurant");
-
-        textView = (TextView) findViewById(R.id.textView2);
-        textView.setText(restaurant.getName());
+        getSupportActionBar().setTitle(restaurant.getName());
         editName = (EditText) findViewById(R.id.editName);
-        editName.setHint(R.string.name_placeholder);
         editText = (EditText) findViewById(R.id.editText);
-        editText.setHint(R.string.text_placeholder);
         ratingBar = (RatingBar)findViewById(R.id.ratingBar);
 
         ImageButton cameraButton = (ImageButton) findViewById(R.id.camera_button);
@@ -94,16 +90,7 @@ public class AddCommentActivity extends AppCompatActivity {
             }
         });
 
-        imageView = (ImageView) findViewById(R.id.comment_image);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        imageView = (ImageView) findViewById(R.id.add_comment_image);
     }
 
     @Override
@@ -151,7 +138,6 @@ public class AddCommentActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
     public void openCamera(View view){
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(intent, CAMERA_PIC_REQUEST);
@@ -159,16 +145,34 @@ public class AddCommentActivity extends AppCompatActivity {
 
     public void saveComment(View view){
         Comment comment = new Comment(editName.getText().toString(), editText.getText().toString(), ratingBar.getRating(), restaurant.getId());
+
+        final ProgressDialog progressDialog = new ProgressDialog(AddCommentActivity.this);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Saving...");
+        progressDialog.show();
+
         Model.instance().addComment(comment, new Model.AddCommentListener() {
             @Override
             public void done(String key) {
                 System.out.println("comment successfully saved");
-                uploadImage(key);
+
+                uploadImage(key, new OnSuccessListener<String>(){
+                    @Override
+                    public void onSuccess(String s) {
+                        progressDialog.dismiss();
+                        Toast.makeText(
+                            MyApplication.getContext(), "Comment saved!", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(getBaseContext(), RestaurantActivity.class);
+                        intent.putExtra("Restaurant", restaurant);
+                        startActivity(intent);
+                        finish();
+                    }
+                });
             }
         });
     }
 
-    public void uploadImage(String commentId){
+    public void uploadImage(String commentId, final OnSuccessListener successListener){
         FirebaseStorage storage = FirebaseStorage.getInstance();
 
         // Create a storage reference from our app
@@ -191,6 +195,7 @@ public class AddCommentActivity extends AppCompatActivity {
             public void onFailure(@NonNull Exception exception) {
                 // Handle unsuccessful uploads
                 System.out.println("image upload failed");
+                successListener.onSuccess("failed");
             }
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -198,6 +203,7 @@ public class AddCommentActivity extends AppCompatActivity {
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                 Uri downloadUrl = taskSnapshot.getDownloadUrl();
                 System.out.println("image successfully saved");
+                successListener.onSuccess("success");
             }
         });
     }

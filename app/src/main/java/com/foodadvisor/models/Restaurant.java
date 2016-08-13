@@ -15,7 +15,6 @@ public class Restaurant implements Serializable {
     private Boolean kosher;
     private Boolean parking;
     private Boolean accessible;
-    private String time;
     private String region;
     private Double latitude;
     private Double longitude;
@@ -84,14 +83,6 @@ public class Restaurant implements Serializable {
 
     public void setAccessible(Boolean accessible) {
         this.accessible = accessible;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
     }
 
     public String getRegion() {

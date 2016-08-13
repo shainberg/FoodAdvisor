@@ -1,15 +1,20 @@
 package com.foodadvisor.models;
 
+import android.net.Uri;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
  * Created by ORI on 06/05/2016.
  */
 public class Comment {
-    Integer id;
+    String id;
     String name;
     String content;
-    String image;
+    Uri image;
     Float rate;
     String date;
     Integer restaurantId;
@@ -21,8 +26,11 @@ public class Comment {
         this.name= name;
         this.content = content;
         this.rate = rate;
-        this.date = new Date().toString();
         this.restaurantId = restaurantId;
+
+        DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+        Date today = Calendar.getInstance().getTime();
+        this.date = df.format(today);
     }
 
     public String getDate() {
@@ -33,11 +41,11 @@ public class Comment {
         this.date = date;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -57,11 +65,11 @@ public class Comment {
         this.content = content;
     }
 
-    public String getImage() {
+    public Uri getImage() {
         return image;
     }
 
-    public void setImage(String image) {
+    public void setImage(Uri image) {
         this.image = image;
     }
 

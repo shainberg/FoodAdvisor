@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_restaurant"
@@ -8,86 +9,148 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.foodadvisor.RestaurantActivity"
     tools:showIn="@layout/activity_restaurant">
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:layout_editor_absoluteY="18dp"
-        tools:layout_editor_absoluteX="-205dp">
+        tools:layout_editor_absoluteX="-205dp"
+        android:weightSum="1">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-    <TextView
-        android:text=""
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:layout_editor_absoluteY="8dp"
-        tools:layout_editor_absoluteX="60dp"
-        android:id="@+id/restaurant_name" />
-
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/activity_vertical_margin">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Address: "
+                android:id="@+id/address_label"/>
     <TextView
         android:text=""
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:layout_editor_absoluteY="33dp"
         tools:layout_editor_absoluteX="60dp"
-        android:id="@+id/restaurant_address" />
-
-    <TextView
-        android:text=""
+        android:id="@+id/restaurant_address"
+        android:textColor="@color/cast_expanded_controller_background_color" />
+        </LinearLayout>
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:layout_editor_absoluteY="63dp"
-        tools:layout_editor_absoluteX="60dp"
-        android:id="@+id/restaurant_time" />
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/activity_vertical_margin">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Type: "
+                android:id="@+id/type_label"/>
+                    <TextView
+                android:text=""
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:layout_editor_absoluteY="63dp"
+                tools:layout_editor_absoluteX="60dp"
+                android:id="@+id/restaurant_type"
+                        android:textColor="@color/cast_expanded_controller_background_color" />
 
-    <TextView
-        android:text=""
+    </LinearLayout>
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:layout_editor_absoluteY="89dp"
-        tools:layout_editor_absoluteX="60dp"
-        android:id="@+id/restaurant_type" />
-
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/activity_vertical_margin">
+            <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Phone Number: "
+            android:id="@+id/phone_number_label"/>
     <TextView
         android:text=""
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:layout_editor_absoluteY="119dp"
         tools:layout_editor_absoluteX="60dp"
-        android:id="@+id/restaurant_phone" />
-
-    <CheckBox
-        android:text="parking"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:layout_editor_absoluteY="180dp"
-        tools:layout_editor_absoluteX="60dp"
-        android:id="@+id/restaurant_parking" />
-
-    <CheckBox
-        android:text="kosher"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:layout_editor_absoluteY="232dp"
-        tools:layout_editor_absoluteX="60dp"
-        android:id="@+id/restaurant_kosher" />
-
-    <CheckBox
-        android:text="accessible"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:layout_editor_absoluteY="280dp"
-        tools:layout_editor_absoluteX="60dp"
-        android:id="@+id/restaurant_accessible" />
-
+        android:id="@+id/restaurant_phone"
+        android:textColor="@color/cast_expanded_controller_background_color" />
     </LinearLayout>
 
-    <Button
-        android:text="Add Review"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:layout_editor_absoluteY="437dp"
-        tools:layout_editor_absoluteX="30dp"
-        android:id="@+id/add_review"
-        />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/activity_vertical_margin">
 
-</android.support.constraint.ConstraintLayout>
+
+            <CheckBox
+                android:text="parking"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:layout_editor_absoluteY="180dp"
+                tools:layout_editor_absoluteX="60dp"
+                android:id="@+id/restaurant_parking" />
+
+            <CheckBox
+                android:text="kosher"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:layout_editor_absoluteY="232dp"
+                tools:layout_editor_absoluteX="60dp"
+                android:id="@+id/restaurant_kosher" />
+
+            <CheckBox
+                android:text="accessible"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:layout_editor_absoluteY="280dp"
+                tools:layout_editor_absoluteX="60dp"
+                android:id="@+id/restaurant_accessible" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:text="Add Review"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/add_review"
+                android:paddingBottom="16dp"
+                android:paddingLeft="64dp"
+                android:paddingRight="64dp"
+                android:paddingTop="16dp"/>
+
+            <ImageButton
+                android:id="@+id/call_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@android:drawable/ic_menu_call"/>
+
+            <ImageButton
+                android:id="@+id/navigate_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@android:drawable/ic_menu_directions"
+                app:layout_anchor="@id/call_button"
+                app:layout_anchorGravity="top"/>
+
+
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/comments_frag_container"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.78">
+        </FrameLayout>
+    </LinearLayout>
+</RelativeLayout>
