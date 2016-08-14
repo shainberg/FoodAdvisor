@@ -1,5 +1,6 @@
 package com.foodadvisor.models;
 
+import android.graphics.Bitmap;
 import android.net.Uri;
 
 import java.text.DateFormat;
@@ -14,7 +15,8 @@ public class Comment {
     String id;
     String name;
     String content;
-    Uri image;
+    Bitmap image;
+    Uri imageUri;
     Float rate;
     String date;
     Integer restaurantId;
@@ -65,11 +67,11 @@ public class Comment {
         this.content = content;
     }
 
-    public Uri getImage() {
+    public Bitmap getImage() {
         return image;
     }
 
-    public void setImage(Uri image) {
+    public void setImage(Bitmap image) {
         this.image = image;
     }
 
@@ -89,4 +91,11 @@ public class Comment {
         this.restaurantId = restaurantId;
     }
 
+    public Uri getImageUri() {
+        return imageUri;
+    }
+
+    public void setImageUri(Uri imageUri) {
+        this.imageUri = imageUri;
+    }
 }

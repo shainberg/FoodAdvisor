@@ -21,35 +21,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-//        Model.instance().addComment(new Comment(3, "shainby", "מאוד בסדר גמור", "", 5, "05/06/1993 04:10", 2), new Model.AddCommentListener() {
-//            @Override
-//            public void done() {
-//
-//            }
-//        });
-
-//        Model.instance().getRestaurants(new Model.GetRestaurantsListener() {
-//            @Override
-//            public void done(List<Restaurant> stList) {
-//                System.out.println("shalom " + stList.size());
-//            }
-//        });
-
-//        Model.instance().getRestaurant(2, new Model.GetRestaurantListener() {
-//            @Override
-//            public void done(Restaurant rest) {
-//                System.out.println("shalom " + rest.getName());
-//            }
-//        });
-
-//        Model.instance().getComments(1, new Model.GetCommentsListener() {
-//            @Override
-//            public void done(List<Comment> stList) {
-//                System.out.println("shalom " + stList.size());
-//            }
-//        });
-
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -68,5 +39,4 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
 
     }
-
 }

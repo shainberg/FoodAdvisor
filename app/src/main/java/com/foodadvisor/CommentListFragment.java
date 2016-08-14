@@ -2,6 +2,7 @@ package com.foodadvisor;
 
 import android.app.ListFragment;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -31,6 +32,12 @@ public class CommentListFragment extends ListFragment {
         super.onCreate(savedInstanceState);
     }
 
+//    @Override
+//    public void onDestroy(){
+//        super.onDestroy();
+//
+//    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -42,13 +49,20 @@ public class CommentListFragment extends ListFragment {
         String restaurantId = this.getArguments().getString("restaurantId");
         Model.instance().getComments(Integer.parseInt(restaurantId), new Model.GetCommentsListener() {
             @Override
-            public void done(List<Comment> stList) {
-                comments = stList;
-                v.findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+            public void done(final List<Comment> commentsRes) {
+                Model.instance().loadImages(commentsRes, new Model.LoadImageListener(){
 
-                final ListAdapter adapter = new ListAdapter(MyApplication.getContext(),
-                        R.layout.comment_list_item, comments);
-                listview.setAdapter(adapter);
+                    @Override
+                    public void onResult(List<Comment> commentsWithImages) {
+                        comments = commentsWithImages;
+                        System.out.println("all set");
+                        v.findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+
+                        final ListAdapter adapter = new ListAdapter(MyApplication.getContext(),
+                                R.layout.comment_list_item, comments);
+                        listview.setAdapter(adapter);
+                    }
+                });
             }
         });
 
@@ -99,9 +113,8 @@ public class CommentListFragment extends ListFragment {
 
                 if (image != null){
                     Picasso.with(MyApplication.getContext())
-                            .load(comment.getImage())
-                            .resize(250, 200)
-                            .into(image);
+                        .load(comment.getImageUri())
+                        .into(image);
                 }
 
                 if (rate != null){

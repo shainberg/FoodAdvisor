@@ -2,7 +2,10 @@ package com.foodadvisor.DAL;
 
 import android.content.Context;
 import android.content.SyncStatusObserver;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 
 import com.firebase.client.ChildEventListener;
@@ -11,6 +14,7 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
+import com.foodadvisor.MyApplication;
 import com.foodadvisor.models.Comment;
 import com.foodadvisor.models.Model;
 import com.foodadvisor.models.Restaurant;
@@ -18,7 +22,10 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +33,10 @@ import java.util.List;
  * Created by OR on 06/05/2016.
  */
 public class DBHandler {
+    final FirebaseStorage storage = FirebaseStorage.getInstance();
+    // Create a storage reference from our app
+    final StorageReference storageRef = storage.getReferenceFromUrl("gs://foodadvisor-c3bea.appspot.com");
+
     public DBHandler(Context context) {
         Firebase.setAndroidContext(context);
     }
@@ -95,11 +106,9 @@ public class DBHandler {
         Firebase ref = new Firebase("https://foodadvisor-c3bea.firebaseio.com/comments");
         Query queryRef = ref.orderByChild("restaurantId").equalTo(restaurantId);
 
-        final FirebaseStorage storage = FirebaseStorage.getInstance();
-
-        // Create a storage reference from our app
-        final StorageReference storageRef = storage.getReferenceFromUrl("gs://foodadvisor-c3bea.appspot.com");
-
+//        final FirebaseStorage storage = FirebaseStorage.getInstance();
+//        // Create a storage reference from our app
+//        final StorageReference storageRef = storage.getReferenceFromUrl("gs://foodadvisor-c3bea.appspot.com");
         queryRef.addValueEventListener(new ValueEventListener() {
              @Override
              public void onDataChange(DataSnapshot snapshot) {
@@ -107,28 +116,10 @@ public class DBHandler {
                  final List<Comment> comments = new ArrayList<Comment>();
 
                  if (snapshot.exists()) {
-                     final Counter counter = new Counter((int) snapshot.getChildrenCount());
+//                     final Counter counter = new Counter((int) snapshot.getChildrenCount());
 
                      for (DataSnapshot child: snapshot.getChildren()) {
                          final Comment comment = child.getValue(Comment.class);
-
-                         storageRef.child("images/" + child.getKey() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                             @Override
-                             public void onSuccess(Uri uri) {
-                                 if (counter.Up()){
-                                     listener.done(comments);
-                                 }
-                                 comment.setImage(uri);
-                             }
-                         }).addOnFailureListener(new OnFailureListener() {
-                             @Override
-                             public void onFailure(@NonNull Exception exception) {
-                                 // Handle any errors
-                                 if (counter.Up()){
-                                     listener.done(comments);
-                                 }
-                             }
-                         });
 
                          comment.setId(child.getKey());
                          comments.add(comment);
@@ -136,8 +127,9 @@ public class DBHandler {
                  }
                  else {
                      System.out.println("no comments");
-                     //Toast toast = Toast.makeText(this, "email not found", Toast.LENGTH_SHORT);
                  }
+
+                 listener.done(comments);
              }
 
              @Override
@@ -163,6 +155,79 @@ public class DBHandler {
         });
     }
 
+    public void uploadImage(String commentId, Bitmap bitmap, final OnSuccessListener successListener){
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+
+        // Create a storage reference from our app
+        StorageReference storageRef = storage.getReferenceFromUrl("gs://foodadvisor-c3bea.appspot.com");
+
+        // Create a reference to 'images/mountains.jpg'
+        StorageReference imageRef = storageRef.child("images/" + commentId + ".jpg");
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 25, byteArrayOutputStream);
+        byte[] imageByteArray = byteArrayOutputStream.toByteArray();
+
+        UploadTask uploadTask = imageRef.putBytes(imageByteArray);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+                System.out.println("image upload failed");
+                successListener.onSuccess("without image");
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                System.out.println("image successfully saved");
+                successListener.onSuccess("");
+            }
+        });
+    }
+
+    public void loadImage(final Comment comment, final OnSuccessListener<Uri> listener){
+        storageRef.child("images/" + comment.getId() + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri data) {
+                System.out.println("load image: " + comment.getId());
+                comment.setImageUri(data);
+                listener.onSuccess(data);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle any errors
+            }
+        });
+    }
+
+    public void loadImageByBytes(final Comment comment, final OnSuccessListener<Bitmap> listener){
+        storageRef.child("images/" + comment.getId() + ".jpg").getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] data) {
+                System.out.println("load image: " + comment.getId());
+//                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(MyApplication.getContext().getContentResolver(), uri);
+
+                Bitmap bmp;
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inMutable = true;
+                bmp = BitmapFactory.decodeByteArray(data, 0, data.length, options);
+
+                //comment.setImage(bmp);
+                listener.onSuccess(bmp);
+                System.out.println("load image: " + comment.getId() +" finished");
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle any errors
+            }
+        });
+    }
+
     private class Counter {
         public Integer count = 0;
         public Integer limit;
@@ -177,7 +242,6 @@ public class DBHandler {
             return (count == limit);
         }
     }
-
 }
 
 

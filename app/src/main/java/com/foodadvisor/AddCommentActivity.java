@@ -40,11 +40,13 @@ import java.io.IOException;
 public class AddCommentActivity extends AppCompatActivity {
     private static final int CAMERA_PIC_REQUEST = 1337;
     ImageView imageView;
+    byte[] imageByteArray;
     EditText editName;
     EditText editText;
     RatingBar ratingBar;
     Restaurant restaurant;
     Uri imageUri;
+    Bitmap imageBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,24 +97,26 @@ public class AddCommentActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1 && resultCode == RESULT_OK) {
-            try {
-                imageView.setImageBitmap(MediaStore.Images.Media.getBitmap(
-                        getContentResolver(), imageUri));
-            } catch (IOException e) {
-                e.printStackTrace();
+        if (resultCode == RESULT_OK) {
+            if (requestCode == 1) {
+                try {
+                    imageBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else if (requestCode == 0) {
+                Uri imageUri = data.getData();
+
+                try {
+                    imageBitmap = MediaStore.Images.Media.getBitmap(MyApplication.getContext().getContentResolver(), imageUri);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-            //imageurl = getRealPathFromURI(imageUri);
 
-//            Bundle extras = data.getExtras();
-//            imageBitmap = (Bitmap) extras.get("data");
-//            textView.setText(imageBitmap.getHeight() + " " + imageBitmap.getWidth());
-//            imageView.setImageBitmap(imageBitmap);
-        }
-        else if (requestCode == 0 && resultCode == RESULT_OK){
-            Uri imageUri = data.getData();
-
-            imageView.setImageURI(imageUri);
+            if (imageBitmap != null) {
+                imageView.setImageBitmap(imageBitmap);
+            }
         }
     }
 
@@ -156,54 +160,18 @@ public class AddCommentActivity extends AppCompatActivity {
             public void done(String key) {
                 System.out.println("comment successfully saved");
 
-                uploadImage(key, new OnSuccessListener<String>(){
+                Model.instance().saveImage(key,imageBitmap, new OnSuccessListener<String>(){
                     @Override
-                    public void onSuccess(String s) {
+                    public void onSuccess(String message) {
                         progressDialog.dismiss();
                         Toast.makeText(
-                            MyApplication.getContext(), "Comment saved!", Toast.LENGTH_SHORT).show();
+                            MyApplication.getContext(), "Comment saved! " + message, Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(getBaseContext(), RestaurantActivity.class);
                         intent.putExtra("Restaurant", restaurant);
                         startActivity(intent);
                         finish();
                     }
                 });
-            }
-        });
-    }
-
-    public void uploadImage(String commentId, final OnSuccessListener successListener){
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-
-        // Create a storage reference from our app
-        StorageReference storageRef = storage.getReferenceFromUrl("gs://foodadvisor-c3bea.appspot.com");
-
-        // Create a reference to 'images/mountains.jpg'
-        StorageReference imageRef = storageRef.child("images/" + commentId + ".jpg");
-
-        // Get the data from an ImageView as bytes
-        imageView.setDrawingCacheEnabled(true);
-        imageView.buildDrawingCache();
-        Bitmap bitmap = imageView.getDrawingCache();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] data = baos.toByteArray();
-
-        UploadTask uploadTask = imageRef.putBytes(data);
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle unsuccessful uploads
-                System.out.println("image upload failed");
-                successListener.onSuccess("failed");
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-                Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                System.out.println("image successfully saved");
-                successListener.onSuccess("success");
             }
         });
     }

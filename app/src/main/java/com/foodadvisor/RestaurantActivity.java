@@ -5,18 +5,18 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.graphics.drawable.Icon;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.foodadvisor.models.Restaurant;
@@ -59,7 +59,7 @@ public class RestaurantActivity extends AppCompatActivity {
         // Comments fragment
         Bundle bundle = new Bundle();
         bundle.putString("restaurantId", restaurant.getId().toString());
-        fragmentTransaction.add(R.id.comments_frag_container, fragment);
+        fragmentTransaction.replace(R.id.comments_frag_container, fragment);
         fragment.setArguments(bundle);
         fragmentTransaction.commit();
 
@@ -106,4 +106,63 @@ public class RestaurantActivity extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+
+        unbindDrawables(findViewById(R.id.content_restaurant));
+        System.gc();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)
+    {
+        if ((keyCode == KeyEvent.KEYCODE_BACK))
+        {
+            finish();
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    private void unbindDrawables(View view)
+    {
+        System.out.println("unbinding...");
+        if (view.getBackground() != null)
+        {
+            view.getBackground().setCallback(null);
+        }
+        if (view instanceof ViewGroup && !(view instanceof AdapterView))
+        {
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++)
+            {
+                unbindDrawables(((ViewGroup) view).getChildAt(i));
+                System.out.println("unbinding... " + i);
+            }
+            ((ViewGroup) view).removeAllViews();
+        }
+    }
+//    @Override
+//    public void unbindDrawables(View view) {
+//        if (view.getBackground() != null) {
+//            view.getBackground().setCallback(null);
+//        }
+//        if (view instanceof ViewGroup) {
+//            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+//                unbindDrawables(((ViewGroup) view).getChildAt(i));
+//            }
+//            ((ViewGroup) view).removeAllViews();
+//        }
+//    }
+//
+//    @Override
+//    public void onDestroy() {
+//        super.onDestroy();
+//        unbindDrawables(mGridView);
+//        mGridView = null;
+//        gridAdapter = null;
+//        System.gc();
+//        Runtime.getRuntime().gc();
+//    }
 }
