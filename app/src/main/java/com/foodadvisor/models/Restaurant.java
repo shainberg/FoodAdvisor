@@ -18,8 +18,23 @@ public class Restaurant implements Serializable {
     private String region;
     private Double latitude;
     private Double longitude;
+    String lastUpdated;
 
     public Restaurant(){}
+
+    public Restaurant(Integer id, String name, String address, String type, Boolean kosher, String phone,
+                      Boolean parking, Boolean accessible, Double latitude, Double longitude){
+        this.id = id;
+        this.name = name;
+        this.address = address;
+        this.phone = phone;
+        this.type = type;
+        this.kosher = kosher;
+        this.parking = parking;
+        this.accessible = accessible;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
 
     public Integer getId() {
         return id;
@@ -107,4 +122,11 @@ public class Restaurant implements Serializable {
         this.longitude = longitude;
     }
 
+    public String getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(String lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
 }

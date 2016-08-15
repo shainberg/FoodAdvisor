@@ -78,7 +78,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng latLng = new LatLng(latitude, longitude);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng , 10));
 
-        Model.instance().getRestaurants(new Model.GetRestaurantsListener() {
+        Model.instance().getAllRestaurantsAsynch(new Model.GetRestaurantsListener() {
             @Override
             public void done(List<Restaurant> stList) {
                 for (Restaurant restaurant : stList){

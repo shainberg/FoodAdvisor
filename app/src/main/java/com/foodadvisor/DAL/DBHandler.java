@@ -41,10 +41,43 @@ public class DBHandler {
         Firebase.setAndroidContext(context);
     }
 
-    public void getRestaurants(final Model.GetRestaurantsListener listener) {
-        Firebase ref = new Firebase("https://foodadvisor-c3bea.firebaseio.com/restaurants");
+//    public void getRestaurants(final Model.GetRestaurantsListener listener) {
+//        Firebase ref = new Firebase("https://foodadvisor-c3bea.firebaseio.com/restaurants");
+//
+//        ref.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot snapshot) {
+//                System.out.println("fetching rests");
+//
+//                final List<Restaurant> restaurants = new ArrayList<Restaurant>();
+//
+//                if (snapshot.exists()) {
+//
+//                    for (DataSnapshot child: snapshot.getChildren()) {
+//                        Restaurant restaurant = child.getValue(Restaurant.class);
+//                        restaurants.add(restaurant);
+//                        System.out.println("hi " + restaurant.getName());
+//                    }
+//                }
+//                else {
+//                    System.out.println("no restaurants");
+//                    //Toast toast = Toast.makeText(this, "email not found", Toast.LENGTH_SHORT);
+//                }
+//
+//                listener.done(restaurants);
+//            }
+//
+//            @Override
+//            public void onCancelled(FirebaseError error) {
+//            }
+//        });
+//    }
 
-        ref.addValueEventListener(new ValueEventListener() {
+    public void getRestaurants(final Model.GetRestaurantsListener listener, String lastUpdateDate) {
+        Firebase ref = new Firebase("https://foodadvisor-c3bea.firebaseio.com/restaurants");
+        Query queryRef = ref.orderByChild("lastUpdated").startAt(lastUpdateDate);
+
+        queryRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 System.out.println("fetching rests");
@@ -224,23 +257,9 @@ public class DBHandler {
             @Override
             public void onFailure(@NonNull Exception exception) {
                 // Handle any errors
+                listener.onSuccess(null);
             }
         });
-    }
-
-    private class Counter {
-        public Integer count = 0;
-        public Integer limit;
-
-
-        public Counter(Integer limit){
-            this.limit = limit;
-        }
-
-        public Boolean Up(){
-            count++;
-            return (count == limit);
-        }
     }
 }
 

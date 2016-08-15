@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.foodadvisor.DAL.DBHandler;
+import com.foodadvisor.DAL.RestaurantSql;
 import com.foodadvisor.MainActivity;
 import com.foodadvisor.MyApplication;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -37,10 +38,14 @@ import java.util.List;
 
 public class Model {
     private final static Model instance = new Model();
+
     DBHandler dbHandler;
+    ModelSql modelSql;
 
     private Model() {
         dbHandler = new DBHandler(MyApplication.getContext());
+        modelSql = new ModelSql(MyApplication.getContext());
+
     }
 
     public static Model instance() {
@@ -59,9 +64,35 @@ public class Model {
         void done(List<Restaurant> stList);
     }
 
-    public void getRestaurants(GetRestaurantsListener listener) {
-        dbHandler.getRestaurants(listener);
+//    public void getRestaurants(GetRestaurantsListener listener) {
+//        dbHandler.getRestaurants(listener);
+//    }
+
+    public void getAllRestaurantsAsynch(final GetRestaurantsListener listener){
+        final String lastUpdateDate = RestaurantSql.getLastUpdateDate(modelSql.getReadbleDB());
+
+        dbHandler.getRestaurants(new GetRestaurantsListener() {
+            @Override
+            public void done(List<Restaurant> restaurants) {
+                if(restaurants != null && restaurants.size() > 0) {
+                    //update the local DB
+                    String recentUpdate = lastUpdateDate;
+                    for (Restaurant s : restaurants) {
+                        RestaurantSql.add(modelSql.getWritableDB(), s);
+                        if (recentUpdate == null || s.getLastUpdated().compareTo(recentUpdate) > 0) {
+                            recentUpdate = s.getLastUpdated();
+                        }
+                        Log.d("TAG","updating: " + s.toString());
+                    }
+                    RestaurantSql.setLastUpdateDate(modelSql.getWritableDB(), recentUpdate);
+                }
+                //return the complete student list to the caller
+                List<Restaurant> res = RestaurantSql.getAllRestaurants(modelSql.getReadbleDB());
+                listener.done(res);
+            }
+        },lastUpdateDate);
     }
+
 
     public interface GetRestaurantListener {
         void done(Restaurant rest);
@@ -89,11 +120,19 @@ public class Model {
     }
 
     public void loadImages(final List<Comment> comments, final LoadImageListener listener) {
+        if (comments.size() == 0)
+            listener.onResult(comments);
+
+        final Counter counter = new Counter(comments.size());
+
         for (final Comment comment : comments) {
             final String imageName = comment.getId() + ".jpg";
             Uri uri = loadImageUriFromFile(imageName);
             if (uri != null){
                 comment.setImageUri(uri);
+
+                if (counter.Up())
+                    listener.onResult(comments);
             }else{
                 dbHandler.loadImageByBytes(comment, new OnSuccessListener<Bitmap>() {
                     @Override
@@ -104,12 +143,15 @@ public class Model {
                             bitmap = null;
                             comment.setImageUri(loadImageUriFromFile(imageName));
                         }
+
+                        if (counter.Up())
+                            listener.onResult(comments);
                     }
                 });
             }
         }
 
-        listener.onResult(comments);
+        //listener.onResult(comments);
     }
 
     private Uri loadImageUriFromFile(String imageFileName){
@@ -127,7 +169,6 @@ public class Model {
     }
 
     private void saveImageToFile(Bitmap imageBitmap, String imageFileName){
-        FileOutputStream fos;
         OutputStream out = null;
         try {
             File dir = Environment.getExternalStoragePublicDirectory(
@@ -156,6 +197,20 @@ public class Model {
         }
     }
 
+    private class Counter {
+        public Integer count = 0;
+        public Integer limit;
+
+
+        public Counter(Integer limit){
+            this.limit = limit;
+        }
+
+        public Boolean Up(){
+            count++;
+            return (count == limit || count == 5);
+        }
+    }
 //    private Bitmap loadImageFromFile(String imageFileName){
 //        String str = null;
 //        Bitmap bitmap = null;
